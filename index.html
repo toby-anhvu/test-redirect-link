@@ -36,17 +36,40 @@
       // App đang cài (com.epiisod.mobile) đăng ký cả 2 scheme: centurion-dev và epiisod.
       // Bản phát hành thật (PROD) dùng scheme "epiisod".
       var APP_SCHEME = "centurion-dev://home";
-      var IOS_STORE = "https://apps.apple.com/us/app/epiisod-living/id6757422745";
-      var ANDROID_STORE =
-        "https://play.google.com/store/apps/details?id=com.epiisod.mobile";
+      var ANDROID_PACKAGE = "com.epiisod.mobile";
+      var IOS_APP_ID = "6757422745";
+
+      // Scheme native mở thẳng app store (không qua trình duyệt)
+      var ANDROID_STORE_NATIVE = "market://details?id=" + ANDROID_PACKAGE;
+      var IOS_STORE_NATIVE = "itms-apps://itunes.apple.com/app/id" + IOS_APP_ID;
+      // Link https dự phòng khi máy không có app store (vd thiết bị không có Play Store)
+      var ANDROID_STORE_WEB =
+        "https://play.google.com/store/apps/details?id=" + ANDROID_PACKAGE;
+      var IOS_STORE_WEB =
+        "https://apps.apple.com/us/app/epiisod-living/id" + IOS_APP_ID;
       // ========================================
 
       var ua = navigator.userAgent || navigator.vendor || "";
       var isAndroid = /android/i.test(ua);
       var isIOS = /iphone|ipad|ipod/i.test(ua);
-      var storeUrl = isAndroid ? ANDROID_STORE : isIOS ? IOS_STORE : null;
 
       document.getElementById("openBtn").href = APP_SCHEME;
+
+      function goToStore() {
+        if (isAndroid) {
+          // mở thẳng app Cửa hàng Play
+          window.location.href = ANDROID_STORE_NATIVE;
+          // nếu không có Play Store -> rớt về web
+          setTimeout(function () {
+            window.location.href = ANDROID_STORE_WEB;
+          }, 800);
+        } else if (isIOS) {
+          window.location.href = IOS_STORE_NATIVE;
+          setTimeout(function () {
+            window.location.href = IOS_STORE_WEB;
+          }, 800);
+        }
+      }
 
       function tryOpenApp() {
         var start = Date.now();
@@ -55,8 +78,8 @@
 
         // app chưa cài -> sau 1.5s vẫn ở lại trang -> sang store
         setTimeout(function () {
-          if (Date.now() - start < 2000 && storeUrl) {
-            window.location.replace(storeUrl);
+          if (Date.now() - start < 2000) {
+            goToStore();
           }
         }, 1500);
       }
