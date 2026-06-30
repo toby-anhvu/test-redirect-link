@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mở EPIISOD</title>
+    <style>
+      body {
+        font-family: -apple-system, system-ui, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+        background: #f4f2f0;
+      }
+      .btn {
+        display: inline-block;
+        padding: 14px 28px;
+        background: #000;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 16px;
+        margin-top: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <p>Đang mở EPIISOD…</p>
+    <a class="btn" id="openBtn" href="#">Mở app thủ công</a>
+
+    <script>
+      // ====== CHỈNH THEO MÔI TRƯỜNG TEST ======
+      var APP_SCHEME = "centurion-dev://home"; // DEV scheme
+      var IOS_STORE = "https://apps.apple.com/us/app/binshoot/id1634093602";
+      var ANDROID_STORE =
+        "https://play.google.com/store/apps/details?id=com.centurion.kd.dev";
+      // ========================================
+
+      var ua = navigator.userAgent || navigator.vendor || "";
+      var isAndroid = /android/i.test(ua);
+      var isIOS = /iphone|ipad|ipod/i.test(ua);
+      var storeUrl = isAndroid ? ANDROID_STORE : isIOS ? IOS_STORE : null;
+
+      document.getElementById("openBtn").href = APP_SCHEME;
+
+      function tryOpenApp() {
+        var start = Date.now();
+        // thử mở app
+        window.location = APP_SCHEME;
+
+        // app chưa cài -> sau 1.5s vẫn ở lại trang -> sang store
+        setTimeout(function () {
+          if (Date.now() - start < 2000 && storeUrl) {
+            window.location.replace(storeUrl);
+          }
+        }, 1500);
+      }
+
+      tryOpenApp();
+    </script>
+  </body>
+</html>
